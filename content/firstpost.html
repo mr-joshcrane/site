@@ -1,0 +1,45 @@
+<article>
+    <h1>Building a Blog with HTMX</h1>
+    <p><em>Published on: June 20, 2024</em></p>
+
+    <section>
+        <h2>Introduction</h2>
+        <p>Welcome to my first blog post! In this post, we'll explore how to create a simple and dynamic blog using HTMX and Go. HTMX allows us to load content dynamically, providing a seamless user experience without the need for full page reloads.</p>
+    </section>
+
+    <section>
+        <h2>What is HTMX?</h2>
+        <p>HTMX is a powerful library that enables dynamic content loading without the complexity of heavy JavaScript frameworks. It uses HTML attributes to define behaviors that allow you to fetch and replace parts of your web page with new content from the server. This can create a highly interactive and responsive user experience.</p>
+    </section>
+
+    <section>
+        <h2>Setting Up the Project</h2>
+        <p>To start building your blog, follow these steps to set up a basic project structure:</p>
+        <ol>
+            <li><strong>Create a Project Directory:</strong> Organize your files by creating a folder for your project. Inside this folder, create a <code>templates</code> directory for your HTML files.</li>
+            <li><strong>Create an Index Page:</strong> Inside the <code>templates</code> directory, create an <code>index.html</code> file. This will serve as the main page for your blog where you can load other content dynamically.</li>
+            <li><strong>Create Individual Post Files:</strong> For each blog post, create a separate HTML file in the <code>templates</code> directory. These files will be dynamically loaded into the main page using HTMX.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Loading Content Dynamically with HTMX</h2>
+        <p>HTMX simplifies the process of loading content dynamically. You can use the <code>hx-get</code> attribute to specify a URL from which to fetch content. Here’s an example:</p>
+        <pre><code>&lt;a href="post1.html" hx-get="post1.html" hx-target="#content" hx-swap="innerHTML"&gt;Read More&lt;/a&gt;</code></pre>
+        <p>This link fetches the content from <code>post1.html</code> and replaces the inner HTML of the element with the ID <code>#content</code> with the fetched content. This approach keeps the user on the same page and provides a seamless experience.</p>
+    </section>
+
+    <section>
+        <h2>Example: Creating a Dynamic Blog Post</h2>
+        <p>Let’s create a dynamic blog post to illustrate how HTMX works. Here’s a basic setup:</p>
+        <pre><code>&lt;a href="article1.html" hx-get="article1.html" hx-target="#content" hx-swap="innerHTML"&gt;Read Article 1&lt;/a&gt;
+&lt;a href="article2.html" hx-get="article2.html" hx-target="#content" hx-swap="innerHTML"&gt;Read Article 2&lt;/a&gt;</code></pre>
+        <p>Clicking these links will load the content of <code>article1.html</code> or <code>article2.html</code> into the <code>#content</code> div on the page, allowing users to read the articles without leaving the main page.</p>
+    </section>
+
+    <section>
+        <h2>Conclusion</h2>
+        <p>Building a dynamic blog with HTMX is both easy and powerful. It allows you to load content on demand, making your blog more interactive and responsive. As you become more familiar with HTMX and Go, you can expand your blog with more features and content. Stay tuned for more posts where we’ll dive deeper into advanced HTMX features and further refine our blog.</p>
+    </section>
+</article>
+

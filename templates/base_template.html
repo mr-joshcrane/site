@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header, footer {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        nav a:hover, nav a.active {
+            font-weight: bold;
+        }
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+        }
+        #content {
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 600px;
+            margin-right: 2rem;
+        }
+        #toc {
+            width: 200px;
+            padding: 1rem;
+            background-color: #f1f1f1;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        #toc ul li {
+            margin: 0.5rem 0;
+        }
+        #toc ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        #toc ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Blog</h1>
+    </header>
+
+    <main>
+        <aside id="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                {{range .}}
+                <li><a href="{{.Title}}" hx-get="{{.URL}}" hx-target="#content" hx-swap="innerHTML">{{.Title}}</a></li>
+                {{end}}
+            </ul>
+        </aside>
+
+        <section id="content">
+            <h2>Welcome to My HTMX Blog</h2>
+            <p>Click on the links in the sidebar to load content dynamically.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 My HTMX Blog. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
