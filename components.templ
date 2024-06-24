@@ -1,0 +1,316 @@
+package site
+
+import (
+  "fmt"
+)
+
+templ Index(title string) {
+  <!DOCTYPE html>
+  <html lang="en">
+   @head("JoshNyk")
+   @styles()
+   @body()
+  </html>
+}
+
+templ styles() {
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #0073e6;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    footer {
+      background-color: #0073e6;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    }
+    main {
+      margin-top: 20px;
+    }
+    h1, h2, h3 {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.75em;
+    }
+    h3 {
+      font-size: 1.5em;
+    }
+    .vulnerabilities {
+      padding: 20px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .vulnerability {
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s;
+      background-color: #fff;
+    }
+    .vulnerability:hover {
+      box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.2);
+    }
+    .vulnerability h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+      color: #0073e6;
+    }
+    .description {
+      margin-top: 10px;
+      font-size: 1em;
+      color: #555;
+    }
+    .label {
+      font-weight: bold;
+      color: #0073e6;
+    }
+    .severity {
+      display: inline-block;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      color: #fff;
+      margin-left: 10px;
+      font-size: 0.9em;
+      vertical-align: middle; /* Aligns the severity with the text */
+    }
+    .severity.low {
+      background-color: #5cb85c;
+    }
+    .severity.medium {
+      background-color: #f0ad4e;
+    }
+    .severity.high {
+      background-color: #d9534f;
+    }
+    .references, .ratings, .advisories, .affects {
+      margin-top: 20px;
+    }
+    .reference, .rating, .advisory, .affect {
+      margin-bottom: 10px;
+    }
+    .reference a, .advisory a {
+      color: #0073e6;
+      text-decoration: none;
+    }
+    .reference a:hover, .advisory a:hover {
+      text-decoration: underline;
+    }
+    .references h3, .ratings h3, .advisories h3, .affects h3 {
+      margin-bottom: 5px;
+      font-size: 1.25em;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      margin: auto;
+      gap: 10px;
+    }
+    label {
+      font-size: 1em;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      width: 100%;
+    }
+    button {
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #005bb5;
+    }
+    #scanResult {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    /* Flexbox container for ratings and advisories */
+    .ratings-and-advisories {
+      display: flex;
+      justify-content: space-between; /* Ensures space is distributed evenly */
+      gap: 20px; /* Adds space between the sections */
+    }
+
+    /* Adjusting details elements */
+    .ratings, .advisories {
+      flex: 1; /* Ensures equal width */
+      min-width: 45%; /* Sets a minimum width to ensure proper layout */
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .ratings summary, .advisories summary {
+      cursor: pointer;
+      font-weight: bold;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      padding: 5px;
+      background-color: #e3f2fd;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    .ratings summary::after, .advisories summary::after {
+      content: " [+]";
+      font-size: 14px;
+      display: inline-block;
+      margin-left: 5px;
+    }
+
+    .ratings[open] summary::after, .advisories[open] summary::after {
+      content: " [-]";
+      font-size: 14px;
+      display: inline-block;
+      margin-left: 5px;
+    }
+
+    .ratings ul, .advisories ul {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+
+    .ratings ul li, .advisories ul li {
+      margin-bottom: 5px;
+    }
+
+    #show-ratings:checked ~ .content-area #ratings,
+    #show-advisories:checked ~ .content-area #advisories {
+      display: block;
+    }
+  .vulnerability.low {
+    background-color: rgba(92, 184, 92, 0.1); /* Light green tint */
+  }
+  .vulnerability.medium {
+    background-color: rgba(240, 173, 78, 0.1); /* Light orange tint */
+  }
+  .vulnerability.high {
+    background-color: rgba(217, 83, 79, 0.1); /* Light red tint */
+  }
+  .vulnerability.unknown {
+    background-color: rgba(128, 0, 128, 0.1); /* Light purple tint */
+  }
+  .severity.unknown {
+    background-color: #a0a0a0; /* Grey for unknown severity */
+  }
+  </style>
+}
+
+templ Vulnerabilities(vulns []Vulnerability) {
+  <div class="vulnerabilities">
+    <h1>Vulnerabilities</h1>
+    for _, vuln := range vulns {
+      @vulnerability(vuln)
+    }
+  </div>
+}
+
+templ vulnerability(vuln Vulnerability) {
+  <div class={"vulnerability " + vuln.Ratings[0].Severity}>
+    <span class="label">{ Split(vuln.Affects[0].Ref) }</span>
+    <a href={ templ.URL(vuln.Source.URL) }> {vuln.ID} </a>
+    <div class="content-area">
+     <details class="advisories">
+        <summary>Advisories</summary>
+        <ul>
+          for _, advisory := range vuln.Advisories {
+            <li class="advisory"><a href="{templ.URL(advisory.URL)}" target="_blank">{advisory.URL}</a></li>
+          }
+        </ul>
+      </details>
+      <details class="ratings">
+        <summary>Ratings</summary>
+        <ul>
+        for _, rating := range vuln.Ratings {
+          <p>Severity: <span class={ "severity " +  rating.Severity }>{rating.Severity}</span></p>
+          <p>Score: {fmt.Sprintf("%.1f", rating.Score)}</p> 
+          <p>Method: {rating.Method}</p>
+          <p>Vector: {rating.Vector}</p>
+        }
+        </ul>
+      </details>
+    </div>
+    <div class="details">
+      <p><span class="label">Description:</span> {vuln.Description}</p>
+
+      </div>
+  </div>
+}
+
+templ body() {
+  <body>
+    <header>
+        <h1>JoshNyk</h1>
+    </header>
+
+    <main>
+        <section id="content">
+            <h2>Repository Scan</h2>
+            <form id="repoForm" hx-post="/scan" hx-target="#scanResult">
+                <label for="repoName">Enter Repository Name:</label>
+                <input type="text" id="repoName" name="repoName" required placeholder="e.g., user/repo">
+                <button type="submit">Scan</button>
+            </form>
+            <div id="scanResult"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 JoshNyk. All rights reserved.</p>
+    </footer>
+</body>
+}
+
+templ head(title string) {
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{ title }</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+  </head>
+}

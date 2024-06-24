@@ -3,17 +3,14 @@ package site
 import (
 	"bytes"
 	"context"
-	"embed"
-	"html/template"
-	"io/fs"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
-	"strings"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 )
-
-//go:embed content/* templates/*
-var f embed.FS
 
 func StatusInternalServerError(err error) events.LambdaFunctionURLResponse {
 	return events.LambdaFunctionURLResponse{
@@ -26,61 +23,73 @@ func StatusInternalServerError(err error) events.LambdaFunctionURLResponse {
 }
 
 func Handler(ctx context.Context, request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
-	// Generate Table of Contents
-	var htmlFile []byte
-	var err error
-	if request.RawPath == "/" {
-		htmlFile, err = generateTOC(f)
-	} else {
-		htmlFile, err = fs.ReadFile(f, request.RawPath[1:])
+	route := request.RawPath
+	switch route {
+	case "/scan":
+		return Scan(ctx, request)
+	default:
+		return indexPage("JoshNyk")
 	}
+}
+
+type Component interface {
+	Render(ctx context.Context, w io.Writer) error
+}
+
+func componentToHTML(c Component) (string, error) {
+	buf := new(bytes.Buffer)
+	err := c.Render(context.Background(), buf)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func indexPage(title string) (events.LambdaFunctionURLResponse, error) {
+	index := Index(title)
+	page, err := componentToHTML(index)
 	if err != nil {
 		return StatusInternalServerError(err), nil
 	}
 	return events.LambdaFunctionURLResponse{
 		StatusCode: 200,
-		Body:       string(htmlFile),
+		Body:       page,
 		Headers: map[string]string{
-			"Content-Type": "text/html",
+			"Content-Type": "text/plain",
 		},
 	}, nil
 }
 
-type Entry struct {
-	Title string
-	URL   string
+func Scan(ctx context.Context, request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+	findings, err := parse()
+	if err != nil {
+		fmt.Println(err)
+		return StatusInternalServerError(err), nil
+	}
+	vulns := Vulnerabilities(findings)
+	page, err := componentToHTML(vulns)
+	if err != nil {
+		return StatusInternalServerError(err), nil
+	}
+
+	return events.LambdaFunctionURLResponse{
+		StatusCode: 200,
+		Body:       page,
+		Headers: map[string]string{
+			"Content-Type": "text/plain",
+		},
+	}, nil
 }
 
-// generateTOC creates a list of links for the Table of Contents
-func generateTOC(fsys fs.FS) ([]byte, error) {
-	var toc []Entry
-	err := fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if !strings.Contains(path, "post") {
-			return nil
-		}
-		toc = append(toc, Entry{
-			Title: d.Name(),
-			URL:   path,
-		})
-		return nil
-	})
-	baseTemplate, err := fs.ReadFile(fsys, "templates/base_template.html")
+func parse() ([]Vulnerability, error) {
+	var findings []Vulnerability
+	data, err := os.ReadFile("vulns.json")
 	if err != nil {
 		return nil, err
 	}
-
-	tmpl, err := template.New("base").Parse(string(baseTemplate))
+	err = json.Unmarshal(data, &findings)
 	if err != nil {
 		return nil, err
 	}
-
-	var buf bytes.Buffer
-	err = tmpl.Execute(&buf, toc)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
+	return findings, nil
 }
