@@ -67,7 +67,7 @@ func styles() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style>\n    body {\n      font-family: 'Roboto', Arial, sans-serif;\n      margin: 20px;\n      background-color: #f9f9f9;\n      color: #333;\n      line-height: 1.6;\n    }\n    header {\n      background-color: #0073e6;\n      color: white;\n      padding: 15px;\n      text-align: center;\n    }\n    footer {\n      background-color: #0073e6;\n      color: white;\n      text-align: center;\n      padding: 10px;\n      position: fixed;\n      bottom: 0;\n      width: 100%;\n      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);\n    }\n    main {\n      margin-top: 20px;\n    }\n    h1, h2, h3 {\n      font-weight: 700;\n      color: #333;\n      margin-bottom: 10px;\n    }\n    h1 {\n      font-size: 2em;\n      margin-top: 0;\n    }\n    h2 {\n      font-size: 1.75em;\n    }\n    h3 {\n      font-size: 1.5em;\n    }\n    .vulnerabilities {\n      padding: 20px;\n      background-color: white;\n      border-radius: 5px;\n      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);\n      margin-bottom: 20px;\n    }\n    .vulnerability {\n      border: 1px solid #ddd;\n      padding: 20px;\n      margin-bottom: 20px;\n      border-radius: 5px;\n      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);\n      transition: box-shadow 0.3s;\n      background-color: #fff;\n    }\n    .vulnerability:hover {\n      box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.2);\n    }\n    .vulnerability h2 {\n      margin-top: 0;\n      font-size: 1.5em;\n      color: #0073e6;\n    }\n    .description {\n      margin-top: 10px;\n      font-size: 1em;\n      color: #555;\n    }\n    .label {\n      font-weight: bold;\n      color: #0073e6;\n    }\n    .severity {\n      display: inline-block;\n      font-weight: bold;\n      padding: 5px 10px;\n      border-radius: 3px;\n      color: #fff;\n      margin-left: 10px;\n      font-size: 0.9em;\n      vertical-align: middle; /* Aligns the severity with the text */\n    }\n    .severity.low {\n      background-color: #5cb85c;\n    }\n    .severity.medium {\n      background-color: #f0ad4e;\n    }\n    .severity.high {\n      background-color: #d9534f;\n    }\n    .references, .ratings, .advisories, .affects {\n      margin-top: 20px;\n    }\n    .reference, .rating, .advisory, .affect {\n      margin-bottom: 10px;\n    }\n    .reference a, .advisory a {\n      color: #0073e6;\n      text-decoration: none;\n    }\n    .reference a:hover, .advisory a:hover {\n      text-decoration: underline;\n    }\n    .references h3, .ratings h3, .advisories h3, .affects h3 {\n      margin-bottom: 5px;\n      font-size: 1.25em;\n      color: #333;\n    }\n    form {\n      display: flex;\n      flex-direction: column;\n      max-width: 400px;\n      margin: auto;\n      gap: 10px;\n    }\n    label {\n      font-size: 1em;\n      margin-bottom: 5px;\n    }\n    input[type=\"text\"] {\n      padding: 10px;\n      border-radius: 5px;\n      border: 1px solid #ccc;\n      font-size: 1em;\n      width: 100%;\n    }\n    button {\n      background-color: #0073e6;\n      color: white;\n      border: none;\n      padding: 10px;\n      border-radius: 5px;\n      cursor: pointer;\n      font-size: 1em;\n      transition: background-color 0.3s;\n    }\n    button:hover {\n      background-color: #005bb5;\n    }\n    #scanResult {\n      margin-top: 20px;\n      padding: 10px;\n      background-color: #f0f0f0;\n      border: 1px solid #ddd;\n      border-radius: 5px;\n    }\n\n    /* Flexbox container for ratings and advisories */\n    .ratings-and-advisories {\n      display: flex;\n      justify-content: space-between; /* Ensures space is distributed evenly */\n      gap: 20px; /* Adds space between the sections */\n    }\n\n    /* Adjusting details elements */\n    .ratings, .advisories {\n      flex: 1; /* Ensures equal width */\n      min-width: 45%; /* Sets a minimum width to ensure proper layout */\n      background-color: #f9f9f9;\n      padding: 15px;\n      border-radius: 5px;\n      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);\n      margin-bottom: 20px;\n    }\n\n    .ratings summary, .advisories summary {\n      cursor: pointer;\n      font-weight: bold;\n      list-style: none;\n      display: flex;\n      justify-content: space-between;\n      padding: 5px;\n      background-color: #e3f2fd;\n      border-radius: 5px;\n      font-size: 1em;\n    }\n\n    .ratings summary::after, .advisories summary::after {\n      content: \" [+]\";\n      font-size: 14px;\n      display: inline-block;\n      margin-left: 5px;\n    }\n\n    .ratings[open] summary::after, .advisories[open] summary::after {\n      content: \" [-]\";\n      font-size: 14px;\n      display: inline-block;\n      margin-left: 5px;\n    }\n\n    .ratings ul, .advisories ul {\n      margin-top: 10px;\n      padding-left: 20px;\n    }\n\n    .ratings ul li, .advisories ul li {\n      margin-bottom: 5px;\n    }\n\n    #show-ratings:checked ~ .content-area #ratings,\n    #show-advisories:checked ~ .content-area #advisories {\n      display: block;\n    }\n  .vulnerability.low {\n    background-color: rgba(92, 184, 92, 0.1); /* Light green tint */\n  }\n  .vulnerability.medium {\n    background-color: rgba(240, 173, 78, 0.1); /* Light orange tint */\n  }\n  .vulnerability.high {\n    background-color: rgba(217, 83, 79, 0.1); /* Light red tint */\n  }\n  .vulnerability.unknown {\n    background-color: rgba(128, 0, 128, 0.1); /* Light purple tint */\n  }\n  .severity.unknown {\n    background-color: #a0a0a0; /* Grey for unknown severity */\n  }\n  </style>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style>\n    body {\n      font-family: 'Roboto', Arial, sans-serif;\n      margin: 20px;\n      background-color: #f9f9f9;\n      color: #333;\n      line-height: 0.9;\n    }\n    header {\n      background-color: #0073e6;\n      color: white;\n      padding: 15px;\n      text-align: center;\n    }\n    footer {\n      background-color: #0073e6;\n      color: white;\n      text-align: center;\n      padding: 10px;\n      position: fixed;\n      bottom: 0;\n      width: 100%;\n      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);\n    }\n    main {\n      margin-top: 20px;\n    }\n    h1, h2, h3 {\n      font-weight: 700;\n      color: #333;\n      margin-bottom: 10px;\n    }\n    h1 {\n      font-size: 2em;\n      margin-top: 0;\n    }\n    h2 {\n      font-size: 1.75em;\n    }\n    h3 {\n      font-size: 1.5em;\n    }\n    .vulnerabilities {\n      padding: 20px;\n      background-color: white;\n      border-radius: 5px;\n      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);\n      margin-bottom: 20px;\n    }\n    .vulnerability {\n      border: 1px solid #ddd;\n      padding: 20px;\n      margin-bottom: 5px;\n      border-radius: 5px;\n      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);\n      transition: box-shadow 0.3s;\n      background-color: #fff;\n    }\n    .vulnerability:hover {\n      box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.2);\n    }\n    .vulnerability h2 {\n      margin-top: 0;\n      font-size: 1.5em;\n      color: #0073e6;\n    }\n    .description {\n      margin-top: 10px;\n      font-size: 1em;\n      color: #555;\n    }\n    .label {\n      font-weight: bold;\n      color: #0073e6;\n    }\n    .severity {\n      display: inline-block;\n      font-weight: bold;\n      padding: 5px 10px;\n      border-radius: 3px;\n      color: #fff;\n      margin-left: 10px;\n      font-size: 0.9em;\n      vertical-align: middle; /* Aligns the severity with the text */\n    }\n    .severity.low {\n      background-color: #5cb85c;\n    }\n    .severity.medium {\n      background-color: #f0ad4e;\n    }\n    .severity.high {\n      background-color: #d9534f;\n    }\n    .severity.critical {\n      background-color: #800080;\n    }\n    .references, .ratings, .advisories, .affects {\n      margin-top: 20px;\n    }\n    .reference, .rating, .advisory, .affect {\n      margin-bottom: 10px;\n    }\n    .reference a, .advisory a {\n      color: #0073e6;\n      text-decoration: none;\n    }\n    .reference a:hover, .advisory a:hover {\n      text-decoration: underline;\n    }\n    .references h3, .ratings h3, .advisories h3, .affects h3 {\n      margin-bottom: 5px;\n      font-size: 1.25em;\n      color: #333;\n    }\n    form {\n      display: flex;\n      flex-direction: column;\n      max-width: 400px;\n      margin: auto;\n      gap: 10px;\n    }\n    label {\n      font-size: 1em;\n      margin-bottom: 5px;\n    }\n    input[type=\"text\"] {\n      padding: 10px;\n      border-radius: 5px;\n      border: 1px solid #ccc;\n      font-size: 1em;\n      width: 100%;\n    }\n    button {\n      background-color: #0073e6;\n      color: white;\n      border: none;\n      padding: 10px;\n      border-radius: 5px;\n      cursor: pointer;\n      font-size: 1em;\n      transition: background-color 0.3s;\n    }\n    button:hover {\n      background-color: #005bb5;\n    }\n    #scanResult {\n      margin-top: 20px;\n      padding: 10px;\n      background-color: #f0f0f0;\n      border: 1px solid #ddd;\n      border-radius: 5px;\n    }\n\n    /* Flexbox container for ratings and advisories */\n    .ratings-and-advisories {\n      display: flex;\n      justify-content: space-between; /* Ensures space is distributed evenly */\n      gap: 20px; /* Adds space between the sections */\n    }\n\n    /* Adjusting details elements */\n    .ratings, .advisories {\n      flex: 1; /* Ensures equal width */\n      min-width: 45%; /* Sets a minimum width to ensure proper layout */\n      background-color: #f9f9f9;\n      padding: 15px;\n      border-radius: 5px;\n      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);\n      margin-bottom: 20px;\n    }\n\n    .ratings summary, .advisories summary {\n      cursor: pointer;\n      font-weight: bold;\n      list-style: none;\n      display: flex;\n      justify-content: space-between;\n      padding: 5px;\n      background-color: #e3f2fd;\n      border-radius: 5px;\n      font-size: 1em;\n    }\n\n    .ratings summary::after, .advisories summary::after {\n      content: \" [+]\";\n      font-size: 14px;\n      display: inline-block;\n      margin-left: 5px;\n    }\n\n    .ratings[open] summary::after, .advisories[open] summary::after {\n      content: \" [-]\";\n      font-size: 14px;\n      display: inline-block;\n      margin-left: 5px;\n    }\n\n    .ratings ul, .advisories ul {\n      margin-top: 10px;\n      padding-left: 20px;\n    }\n\n    .ratings ul li, .advisories ul li {\n      margin-bottom: 5px;\n    }\n\n    #show-ratings:checked ~ .content-area #ratings,\n    #show-advisories:checked ~ .content-area #advisories {\n      display: block;\n    }\n  .vulnerability.low {\n    background-color: rgba(92, 184, 92, 0.1); /* Light green tint */\n  }\n  .vulnerability.medium {\n    background-color: rgba(240, 173, 78, 0.1); /* Light orange tint */\n  }\n  .vulnerability.high {\n    background-color: rgba(217, 83, 79, 0.1); /* Light red tint */\n  }\n  .vulnerability.critical {\n    background-color: rgba(128, 0, 128, 0.1); /* Light purple tint */\n  }\n  .severity.unknown {\n    background-color: #a0a0a0; /* Grey for unknown severity */\n  }\n  .hidden {\n    display: none;\n  }\n\n.vulnerability-strip {\n  border: 1px solid #ddd;\n  margin-bottom: 2px;\n  border-radius: 5px;\n  overflow: hidden;\n  background-color: #f9f9f9;\n}\n\n.vulnerability-summary {\n  padding: 2px;\n  cursor: pointer;\n  background-color: #fff;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.vulnerability-summary:hover {\n  background-color: #f0f0f0;\n}\n\n.vulnerability-details {\n  padding: 10px;\n  max-height: 0;\n  overflow: hidden;\n  transition: max-height 0.3s;\n}\n\n.open .vulnerability-details {\n  max-height: 2000px; /* Adjust to the maximum height as needed */\n}\n\n.severity-indicator {\n  width: 10px;\n  height: 100%;\n  border-radius: 5px 0 0 5px;\n}\n\n    .vulnerability-details {\n      display: none;\n    }\n\n    .details-toggle {\n      display: none;\n    }\n\n    .details-toggle:checked + .vulnerability-details {\n      display: block;\n    }\n  </style>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,6 +96,10 @@ func Vulnerabilities(vulns []Vulnerability) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, vuln := range vulns {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = vulnerability(vuln).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -112,7 +116,7 @@ func Vulnerabilities(vulns []Vulnerability) templ.Component {
 	})
 }
 
-func vulnerability(vuln Vulnerability) templ.Component {
+func vulnerabilityStrip(vuln Vulnerability) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -130,7 +134,7 @@ func vulnerability(vuln Vulnerability) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<summary class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -150,7 +154,7 @@ func vulnerability(vuln Vulnerability) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(Split(vuln.Affects[0].Ref))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 254, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 312, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -172,36 +176,116 @@ func vulnerability(vuln Vulnerability) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(vuln.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 255, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 313, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a><div class=\"content-area\"><details class=\"advisories\"><summary>Advisories</summary><ul>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, advisory := range vuln.Advisories {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"advisory\"><a href=\"{templ.URL(advisory.URL)}\" target=\"_blank\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(advisory.URL)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 261, Col: 98}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(vuln.Ratings[0].Score))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 314, Col: 43}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></details> <details class=\"ratings\"><summary>Ratings</summary><ul>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></summary>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func vulnerability(vuln Vulnerability) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		var templ_7745c5c3_Var12 = []any{"vulnerability " + vuln.Ratings[0].Severity}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var12).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><span class=\"label\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(Split(vuln.Affects[0].Ref))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 320, Col: 52}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 templ.SafeURL = templ.URL(vuln.Source.URL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var15)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(vuln.ID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 321, Col: 52}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a><div class=\"details\"><p><span class=\"label\">Description:</span> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(vuln.Description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 323, Col: 66}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><div class=\"content-area\"><details class=\"ratings\"><summary>Ratings</summary><ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -210,8 +294,8 @@ func vulnerability(vuln Vulnerability) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var11 = []any{"severity " + rating.Severity}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
+			var templ_7745c5c3_Var18 = []any{"severity " + rating.Severity}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var18...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -219,12 +303,12 @@ func vulnerability(vuln Vulnerability) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var11).String())
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var18).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -232,12 +316,12 @@ func vulnerability(vuln Vulnerability) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(rating.Severity)
+			var templ_7745c5c3_Var20 string
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(rating.Severity)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 269, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 330, Col: 86}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -245,38 +329,58 @@ func vulnerability(vuln Vulnerability) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.1f", rating.Score))
+			var templ_7745c5c3_Var21 string
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.1f", rating.Score))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 270, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 331, Col: 54}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p>Method: ")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(rating.Method)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 271, Col: 35}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p>Vector: ")
+			if rating.Method == "" {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" class=\"hidden\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(">Method: ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(rating.Vector)
+			var templ_7745c5c3_Var22 string
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(rating.Method)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 272, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 332, Col: 77}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if rating.Vector == "" {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" class=\"hidden\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(">Vector: ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var23 string
+			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(rating.Vector)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 333, Col: 77}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -285,20 +389,39 @@ func vulnerability(vuln Vulnerability) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></details></div><div class=\"details\"><p><span class=\"label\">Description:</span> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></details> <details class=\"advisories\"><summary>Advisories</summary><ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(vuln.Description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 278, Col: 66}
+		for _, advisory := range vuln.Advisories {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"advisory\"><a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var24 templ.SafeURL = templ.URL(advisory.URL)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var24)))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" target=\"_blank\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var25 string
+			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(advisory.URL)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 341, Col: 96}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></details></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -317,9 +440,9 @@ func body() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
+		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var26 == nil {
+			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body><header><h1>JoshNyk</h1></header><main><section id=\"content\"><h2>Repository Scan</h2><form id=\"repoForm\" hx-post=\"/scan\" hx-target=\"#scanResult\"><label for=\"repoName\">Enter Repository Name:</label> <input type=\"text\" id=\"repoName\" name=\"repoName\" required placeholder=\"e.g., user/repo\"> <button type=\"submit\">Scan</button></form><div id=\"scanResult\"></div></section></main><footer><p>&copy; 2024 JoshNyk. All rights reserved.</p></footer></body>")
@@ -341,21 +464,21 @@ func head(title string) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var27 == nil {
+			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		var templ_7745c5c3_Var28 string
+		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 312, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components.templ`, Line: 379, Col: 18}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

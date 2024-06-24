@@ -81,8 +81,8 @@ func Scan(ctx context.Context, request events.LambdaFunctionURLRequest) (events.
 	}, nil
 }
 
-func parse() ([]Vulnerability, error) {
-	var findings []Vulnerability
+func parse() (AllVulnerabilities, error) {
+	var findings CycloneDX
 	data, err := os.ReadFile("vulns.json")
 	if err != nil {
 		return nil, err
@@ -91,5 +91,10 @@ func parse() ([]Vulnerability, error) {
 	if err != nil {
 		return nil, err
 	}
-	return findings, nil
+	if len(findings.Vulnerabilities) == 0 {
+		return nil, fmt.Errorf("no vulnerabilities found")
+	}
+	cleanedVulns := Clean(findings.Vulnerabilities) 
+	sorted := SortVulns(cleanedVulns)
+	return sorted, nil
 }
