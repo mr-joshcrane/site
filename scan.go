@@ -74,11 +74,11 @@ func ParseGithubRepoURL(rawURL string) (string, string, error) {
 	// repoName=cultureamp%2Fmurmur
 	spl := strings.Split(rawURL, "=")
 	if len(spl) != 2 {
-		return "", "", fmt.Errorf("Invalid URL")
+		return "", "", fmt.Errorf("invalid URL")
 	}
 	spl = strings.Split(spl[1], "%2F")
 	if len(spl) != 2 {
-		return "", "", fmt.Errorf("Invalid URL")
+		return "", "", fmt.Errorf("invalid URL")
 	}
 	return spl[0], spl[1], nil
 }

@@ -8,9 +8,18 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/mr-joshcrane/site"
+	"github.com/mr-joshcrane/site/backend"
+	"github.com/mr-joshcrane/site/store"
 )
 
 func main() {
+	s := store.NewMemoryStore()
+	go func(s store.Store) {
+		err := backend.Workers(s)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	}(&s)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		lambdaRequest, err := convertToLambdaFunctionURLRequest(r)
@@ -18,7 +27,8 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		response, err := site.Handler(nil, *lambdaRequest)
+
+		response, err := site.StoreHandler(&s)(nil, *lambdaRequest)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -26,12 +36,12 @@ func main() {
 		convertLambdaFunctionResponse(w, response)
 	})
 
-	site := &http.Server{
+	srv := &http.Server{
 
 		Addr:    ":8080",
 		Handler: mux,
 	}
-	err := site.ListenAndServe()
+	err := srv.ListenAndServe()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}

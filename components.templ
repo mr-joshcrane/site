@@ -2,6 +2,7 @@ package site
 
 import (
   "fmt"
+  "github.com/mr-joshcrane/site/store"
 )
 
 templ Index(title string) {
@@ -313,6 +314,45 @@ templ styles() {
     color: #777;
     margin-top: 0px;
   }
+
+  .repositories {
+    margin: 20px 0;
+}
+
+.repository-strip {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.repository-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.repository-summary:hover {
+    background-color: #f0f0f0;
+}
+
+.repository-summary span {
+    margin-right: 15px;
+}
+
+.as-of {
+    font-style: italic;
+    color: #555;
+}
+
+.repository-details {
+    padding: 10px 15px;
+    border-top: 1px solid #ddd;
+}
+
   </style>
   
 }
@@ -376,7 +416,7 @@ templ vulnerability(org string, repo string, vuln Vulnerability) {
 templ scanUI() {
           <section id="content">
             <h2>Repository Scan</h2>
-            <form id="repoForm" hx-post="/addRepo" hx-target="#repoEntries" hx-swap="beforeend">
+            <form id="repoForm" hx-post="/addRepo"  hx-swap="none">
                 <label for="repoName">Enter Repository Name:</label>
                 <input type="text" id="repoName" name="repoName" required placeholder="e.g., user/repo">
                 <button type="submit">Scan</button>
@@ -386,21 +426,28 @@ templ scanUI() {
 
 templ repoList() {
     <section class="vulnerabilities" id="Repositories">
-        <h2>Repositories</h2>
-        <ul class="repository-listing" hx-target="repoEntries" id="repoEntries">
-            <!-- List of repositories will be dynamically appended here -->
+        <h2  hx-get="/repos" hx-target="#repoEntries" hx-swap="innerHTML" hx-trigger="every 10s">Repositories</h2>
+        <ul class="repository-listing" id="repoEntries"> <!-- List of repositories will be dynamically appended here -->
         </ul>
     </section>
 }
 
-templ RepositoryComponent(repoName string) {
-  <details name={ repoName } hx-get="/result"  hx-trigger="click" hx-target="this" hx-swap="none"  class="repository-strip" >
+templ RepositoryList(repos store.RepositoriesModel) {
+  for _, repo := range repos {
+    @RepositoryComponent(repo)
+  }
+}
+
+templ RepositoryComponent(repo store.RepositoryModel) {
+  <details name={ repo.Name }  hx-trigger="click" hx-target="this" hx-swap="none"  class="repository-strip" >
     <summary class="repository-summary">
-      <span  >{ repoName }</span>
-      <button name={ repoName } hx-get="/scan"  hx-trigger="click" hx-target="this" hx-swap="none" >Scan</button>
+      <span  >{ repo.Org + "/"  + repo.Name }</span>
+      <span class="as-of">As of commit <code>{ repo.HEAD }</code></span>
+      <span> Created on { repo.CreatedOn.String() }</span>
+      <span> Updated at { repo.UpdatedOn.String() }</span> 
     </summary>
     <div class="repository-details">
-      <p name={ repoName } hx-get="/result" hx-trigger="every 1s" hx-target="this" hx-swap="outerHTML">Processing... </p>
+      
     </div>
   </details>
 }
