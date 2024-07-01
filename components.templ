@@ -293,37 +293,65 @@ templ styles() {
     .details-toggle:checked + .vulnerability-details {
       display: block;
     }
+  .repository-listing {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  .repository-strip {
+  border: 1px solid #ddd;
+  margin-bottom: 2px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #f9f9f9; /* Replace with your desired background color */
+  padding: 10px;
+}
+  .as-of {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 0px;
+  }
   </style>
   
 }
+// https://github.com/cultureamp/backstage/tree/a527e0724344bee62d4d4ce5526d404967d483f5
 
-templ Vulnerabilities(vulns []Vulnerability) {
+templ asOf(sha string) {
+  <p class="as-of">As of commit <code>{ sha }</code></p>
+}
+
+templ Vulnerabilities(repoName string, findings RepositoryFindings) {
   <div class="vulnerabilities">
-    <h1>Vulnerabilities</h1>
-    for _, vuln := range vulns {
-      // @vulnerabilityStrip(vuln)
-      @vulnerability(vuln)
+    @asOf(findings.SHA)
+    for _, vuln := range findings.Vulnerabilities {
+      <details>
+        <summary class={"vulnerability " + vuln.Ratings[0].Severity}>
+      @vulnerabilityStrip(vuln)
+        </summary>
+      @vulnerability(findings.Organisation, findings.Repository, vuln)
+      </details>
     }
   </div>
 }
 
 templ vulnerabilityStrip(vuln Vulnerability) {
-  <summary class={"vulnerability " + vuln.Ratings[0].Severity}>
     <span class="label">{ Split(vuln.Affects[0].Ref) }</span>
     <a href={ templ.URL(vuln.Source.URL) }> {vuln.ID} </a>
     <a> { fmt.Sprint(vuln.Ratings[0].Score) } </a>
-  </summary>
 }
 
-templ vulnerability(vuln Vulnerability) {
+templ vulnerability(org string, repo string, vuln Vulnerability) {
   <div class={"vulnerability " + vuln.Ratings[0].Severity}>
-    <span class="label">{ Split(vuln.Affects[0].Ref) }</span>
-    <a href={ templ.URL(vuln.Source.URL) }> {vuln.ID} </a>
     <div class="details">
       <p><span class="label">Description:</span> {vuln.Description}</p>
+      <p>
+        <span class="label">File References:</span>
+        <a href={ templ.URL(fmt.Sprintf("https://github.com/%s/%s/blob/master%s", org, repo, vuln.Dependency.FileLocations())) }> { fmt.Sprintf("https://github.com/%s/%s/blob/master%s", org, repo, vuln.Dependency.FileLocations()) }</a>
+      </p>
     </div>
-    <div class="content-area">
-      <details class="ratings">
+      <details class={"vulnerability " + vuln.Ratings[0].Severity}>
         <summary>Ratings</summary>
         <ul>
         for _, rating := range vuln.Ratings {
@@ -334,18 +362,47 @@ templ vulnerability(vuln Vulnerability) {
         }
         </ul>
       </details>
-     <details class="advisories">
+     <details class={"vulnerability " + vuln.Ratings[0].Severity}>
         <summary>Advisories</summary>
         <ul>
           for _, advisory := range vuln.Advisories {
-            <li class="advisory"><a href={templ.URL(advisory.URL)} target="_blank">{advisory.URL}</a></li>
+            <li class="advisory"><a href={templ.URL(advisory.URL)}>{advisory.URL}</a></li>
           }
         </ul>
       </details>
-
-    </div>
-
   </div>
+}
+
+templ scanUI() {
+          <section id="content">
+            <h2>Repository Scan</h2>
+            <form id="repoForm" hx-post="/addRepo" hx-target="#repoEntries" hx-swap="beforeend">
+                <label for="repoName">Enter Repository Name:</label>
+                <input type="text" id="repoName" name="repoName" required placeholder="e.g., user/repo">
+                <button type="submit">Scan</button>
+            </form>
+        </section>
+}
+
+templ repoList() {
+    <section class="vulnerabilities" id="Repositories">
+        <h2>Repositories</h2>
+        <ul class="repository-listing" hx-target="repoEntries" id="repoEntries">
+            <!-- List of repositories will be dynamically appended here -->
+        </ul>
+    </section>
+}
+
+templ RepositoryComponent(repoName string) {
+  <details name={ repoName } hx-get="/result"  hx-trigger="click" hx-target="this" hx-swap="none"  class="repository-strip" >
+    <summary class="repository-summary">
+      <span  >{ repoName }</span>
+      <button name={ repoName } hx-get="/scan"  hx-trigger="click" hx-target="this" hx-swap="none" >Scan</button>
+    </summary>
+    <div class="repository-details">
+      <p name={ repoName } hx-get="/result" hx-trigger="every 1s" hx-target="this" hx-swap="outerHTML">Processing... </p>
+    </div>
+  </details>
 }
 
 templ body() {
@@ -355,15 +412,8 @@ templ body() {
     </header>
 
     <main>
-        <section id="content">
-            <h2>Repository Scan</h2>
-            <form id="repoForm" hx-post="/scan" hx-target="#scanResult">
-                <label for="repoName">Enter Repository Name:</label>
-                <input type="text" id="repoName" name="repoName" required placeholder="e.g., user/repo">
-                <button type="submit">Scan</button>
-            </form>
-            <div id="scanResult"></div>
-        </section>
+        @scanUI()
+        @repoList()
     </main>
 
     <footer>

@@ -6,9 +6,66 @@ import (
 	"strings"
 )
 
+type RepositoryFindings struct {
+	SHA             string          `json:"sha"`
+	Organisation    string          `json:"organisation"`
+	Repository      string          `json:"repository"`
+	Dependencies    []Dependency    `json:"dependencies"`
+	Vulnerabilities []Vulnerability `json:"vulnerabilities"`
+}
+
+type Location struct {
+	Path string `json:"path"`
+}
+
+type Dependency struct {
+	Name       string     `json:"name"`
+	Version    string     `json:"version"`
+	Type       string     `json:"type"`
+	Locations  []Location `json:"locations"`
+	PackageURL string     `json:"purl"`
+	Language   string     `json:"language"`
+	Metadata   struct {
+		Resolved string `json:"resolved"`
+	} `json:"metadata"`
+}
+
+func (d Dependency) FileLocations() string {
+	for _, loc := range d.Locations {
+		return loc.Path
+	}
+	return ""
+}
+
+func MatchDepsToVulns(deps []Dependency, vuln []Vulnerability) []Vulnerability {
+	var matchedVulns []Vulnerability
+	for _, vuln := range vuln {
+		var augmentedDep Dependency
+		for _, dep := range deps {
+			if len(vuln.Affects) != 1 {
+				fmt.Println("VIOLATION: Affects length")
+				fmt.Println(vuln.ID)
+				fmt.Println(vuln.Affects)
+			}
+			if strings.HasPrefix(vuln.Affects[0].Ref, dep.PackageURL) {
+				augmentedDep = dep
+				break
+			}
+		}
+		vuln.Dependency = augmentedDep
+		matchedVulns = append(matchedVulns, vuln)
+	}
+	return matchedVulns
+}
+
+type SyftFinding struct {
+	Artifacts []Dependency `json:"artifacts"`
+}
+
 // Vulnerability holds the data structure for the vulnerability information.
 type Vulnerability struct {
 	BomRef      string      `json:"bom-ref"`
+	PackageURL  string      `json:"purl"`
 	ID          string      `json:"id"`
 	Source      Source      `json:"source"`
 	References  []Reference `json:"references"`
@@ -16,6 +73,7 @@ type Vulnerability struct {
 	Description string      `json:"description"`
 	Advisories  []Advisory  `json:"advisories"`
 	Affects     []Affect    `json:"affects"`
+	Dependency  Dependency  `json:"dependency,omitempty"`
 }
 
 type AllVulnerabilities []Vulnerability
@@ -82,8 +140,6 @@ func Clean(v AllVulnerabilities) AllVulnerabilities {
 			var adjustedSeverity string
 			switch {
 			case r.Severity != "" && r.Score > 0:
-				fmt.Println("Both severity and score are present. Skipping adjustment.")
-
 			case r.Score > 0 && r.Severity == "":
 				switch {
 				case r.Score >= 9.0:
@@ -98,8 +154,6 @@ func Clean(v AllVulnerabilities) AllVulnerabilities {
 					adjustedSeverity = "unknown"
 				}
 			case r.Score <= 0 && r.Severity != "":
-				fmt.Println("Severity is present, but score is not. Adjusting score based on severity.")
-				fmt.Println(r.Severity)
 				switch strings.ToLower(r.Severity) {
 				case "critical":
 					adjustedScore = 9.0
@@ -120,7 +174,6 @@ func Clean(v AllVulnerabilities) AllVulnerabilities {
 			if r.Severity == "" {
 				vuln.Ratings[i].Severity = adjustedSeverity
 			}
-			fmt.Println(r.Score, adjustedScore)
 			if r.Score <= 0.0 {
 				vuln.Ratings[i].Score = adjustedScore
 			}

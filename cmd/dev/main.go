@@ -23,7 +23,7 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		convertLambdaFucntionResponse(w, response)
+		convertLambdaFunctionResponse(w, response)
 	})
 
 	site := &http.Server{
@@ -80,7 +80,7 @@ func convertToLambdaFunctionURLRequest(r *http.Request) (*events.LambdaFunctionU
 	return lambdaRequest, nil
 }
 
-func convertLambdaFucntionResponse(w http.ResponseWriter, response events.LambdaFunctionURLResponse) {
+func convertLambdaFunctionResponse(w http.ResponseWriter, response events.LambdaFunctionURLResponse) {
 	// Set the status code
 	w.WriteHeader(response.StatusCode)
 
