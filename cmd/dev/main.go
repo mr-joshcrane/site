@@ -13,7 +13,11 @@ import (
 )
 
 func main() {
-	s := store.NewMemoryStore()
+	s, err := store.NewSQLiteStore("site.db")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 	go func(s store.Store) {
 		err := backend.Workers(s)
 		if err != nil {
@@ -41,7 +45,7 @@ func main() {
 		Addr:    ":8080",
 		Handler: mux,
 	}
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}

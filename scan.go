@@ -41,6 +41,7 @@ func gitClone(org string, repo string) error {
 	return os.WriteFile(location+"sha", sha.Bytes(), 0644)
 }
 
+
 func syftAndGrype(org string, repo string) error {
 	dbDir := fmt.Sprintf("db/%s/%s/.", org, repo)
 	cmd := exec.Command("syft", "scan", dbDir, "-o", "json")

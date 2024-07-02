@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.2.731
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/google/go-github/v62 v62.0.0
+	github.com/mattn/go-sqlite3 v1.14.22
 )
 
 require github.com/google/go-querystring v1.1.0 // indirect
