@@ -1,7 +1,9 @@
 package backend
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -18,12 +20,18 @@ func NewGithubClient(authToken string) *github.Client {
 }
 
 func GetRepositories(c *github.Client) ([]*github.Repository, error) {
+	var total int
 	var repositories []*github.Repository
 	opt := &github.RepositoryListByOrgOptions{
-		ListOptions: github.ListOptions{PerPage: 100},
+		ListOptions: github.ListOptions{PerPage: 1},
+		Sort:        "updated",
 	}
 
 	for {
+		total += 1
+		if total > 10 {
+			break
+		}
 		repos, resp, err := c.Repositories.ListByOrg(context.Background(), "cultureamp", opt)
 		if err != nil {
 			return nil, err
@@ -35,6 +43,24 @@ func GetRepositories(c *github.Client) ([]*github.Repository, error) {
 		opt.Page = resp.NextPage
 	}
 	return repositories, nil
+}
+
+func GetArchiveZip(c *github.Client, owner, repo, ref string) (*bytes.Buffer, error) {
+	archiveURL, _, err := c.Repositories.GetArchiveLink(context.Background(), owner, repo, github.Zipball, &github.RepositoryContentGetOptions{Ref: ref}, 1)
+	if err != nil {
+		return nil, err
+	}
+	archive, err := c.Client().Get(archiveURL.String())
+	if err != nil {
+		return nil, err
+	}
+	fmt.Print(archive)
+	defer archive.Body.Close()
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(archive.Body)
+
+	return buf, nil
 }
 
 func Do(repos []*github.Repository) ([]store.RepositoryModel, error) {
