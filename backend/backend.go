@@ -2,33 +2,94 @@ package backend
 
 import (
 	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
 	"os"
-	"os/exec"
+	"path/filepath"
 	"strings"
-	"time"
 
+	"github.com/anchore/grype/grype"
+	"github.com/anchore/grype/grype/db"
+	"github.com/anchore/grype/grype/pkg"
+	"github.com/anchore/stereoscope/pkg/image"
+	"github.com/anchore/syft/syft"
+	"github.com/anchore/syft/syft/format"
+	"github.com/anchore/syft/syft/format/cyclonedxjson"
+	"github.com/anchore/syft/syft/sbom"
 	"github.com/mr-joshcrane/site/store"
 )
 
 func Workers(s store.Store) error {
-	for {
-		// err := ScanRepos(s)
-		// if err != nil {
-		// 	return err
-		// }
-		repos, err := s.ListRepos()
+
+	err := ScanRepos(s)
+	if err != nil {
+		return err
+	}
+	repos, err := s.ListRepos()
+	if err != nil {
+		return err
+	}
+
+	for _, repo := range repos {
+		fmt.Println("Processing", repo.Org, repo.Name)
+		file, err := GitCloneRepo(repo.Org, repo.Name, repo.HEAD)
 		if err != nil {
 			return err
 		}
-		for _, repo := range repos {
-			fmt.Println("Processing repo:", repo)
+		syftDoc, err := Syft(file, fmt.Sprintf("%s/%s/%s", repo.Org, repo.Name, repo.HEAD))
+		if err != nil {
+			fmt.Println("Error syfting")
+			return err
 		}
-		time.Sleep(1 * time.Hour)
-	}
+		err = s.StoreSyft(repo.Org, repo.Name, repo.HEAD, *syftDoc)
+		if err != nil {
+			fmt.Println("Error storing syft")
+			return err
+		}
+		encoder, err := cyclonedxjson.NewFormatEncoderWithConfig(cyclonedxjson.EncoderConfig{
+			Version: "1.6",
+		})
+		if err != nil {
+			return err
+		}
+		d, err := format.Encode(*syftDoc, encoder)
+		if err != nil {
+			return err
+		}
+		filename := fmt.Sprintf("sbom_for%s.json", repo.Name)
+		err = os.WriteFile(filename, d, 0644)
+		if err != nil {
+			return err
+		}
+		vulnDB, _, closer, err := grype.LoadVulnerabilityDB(db.Config{
+			DBRootDir:           "~/.cache/grype/db",
+			ListingURL:          "https://toolbox-data.anchore.io/grype/databases/listing.json",
+			ValidateByHashOnGet: false,
+		}, true)
+		if err != nil {
+			return err
+		}
+		defer closer.Close()
 
+		matcher := grype.DefaultVulnerabilityMatcher(*vulnDB)
+		p, c, _, err := pkg.Provide(fmt.Sprintf("file:%s", filename), pkg.ProviderConfig{
+			SyftProviderConfig: pkg.SyftProviderConfig{
+				SBOMOptions: syft.DefaultCreateSBOMConfig(),
+				RegistryOptions: &image.RegistryOptions{
+					Credentials: []image.RegistryCredentials{},
+				}}})
+		if err != nil {
+			return err
+		}
+		matches, noMATCH, err := matcher.FindMatches(p, c)
+		if err != nil {
+			return err
+		}
+		fmt.Println(noMATCH)
+		fmt.Println(matches.Count())
+
+	}
+	return nil
 }
 
 func ScanRepos(s store.Store) error {
@@ -59,70 +120,43 @@ func ScanRepos(s store.Store) error {
 		if err != nil {
 			return err
 		}
-		time.Sleep(200 * time.Millisecond)
 	}
 	return nil
 }
 
-func GitCloneRepo(org string, repo string, commit string) (*os.File, error) {
+func GitCloneRepo(org string, repo string, commit string) (*bytes.Buffer, error) {
 	// git clone
-	filename := fmt.Sprintf("%s.%s.%s.tar.gz", org, repo, commit)
-	command := fmt.Sprintf("git archive --format=tar.gz --output=%s %s $(git ls-remote --get-url", filename, commit)
-	commands := strings.Split(command, " ")
-	// clone
-	cmd := exec.Command(commands[0], commands[1:]...)
-	err := cmd.Run()
+	zip, err := GetArchiveZip(NewGithubClient(""), org, repo, commit)
 	if err != nil {
 		return nil, err
 	}
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
+	return zip, nil
 }
 
-func Syft(file *os.File) (io.Reader, error) {
-	// file is a tar.gz
+func Syft(archive *bytes.Buffer, name string) (*sbom.SBOM, error) {
+	// file is a zip
+	ctx := context.Background()
+
 	tempDir, err := os.MkdirTemp("", "syft")
 	if err != nil {
 		return nil, err
-	}
-	// extract the tar.gz
-	cmd := exec.Command("tar", "-xzf", file.Name(), "-C", tempDir)
-	err = cmd.Run()
-	if err != nil {
-		return nil, err
-	}
-	cmd = exec.Command("syft", "scan", tempDir, "-o", "json")
-	data := new(bytes.Buffer)
-	cmd.Stdout = data
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
 
-func ParseSyft(data io.Reader, origin string) (store.SyftDocument, error) {
-	var document store.SyftDocument
-	d, err := io.ReadAll(data)
-	if err != nil {
-		return store.SyftDocument{}, err
 	}
-	err = json.Unmarshal(d, document)
+	defer os.RemoveAll(tempDir)
+	outputPath := filepath.Join(tempDir, "archive.zip")
+	err = os.WriteFile(outputPath, archive.Bytes(), 0644)
 	if err != nil {
-		return store.SyftDocument{}, err
+		return nil, err
 	}
-	commit, organization, repository, err := originSplit(origin)
+	source, err := syft.GetSource(ctx, outputPath, nil)
 	if err != nil {
-		return store.SyftDocument{}, err
+		return nil, err
 	}
-	document.Commit = commit
-	document.Organisation = organization
-	document.Repository = repository
-	return document, nil
+	sbom, err := syft.CreateSBOM(ctx, source, nil)
+	if err != nil {
+		return nil, err
+	}
+	return sbom, nil
 }
 
 func originSplit(origin string) (string, string, string, error) {
@@ -133,13 +167,34 @@ func originSplit(origin string) (string, string, string, error) {
 	return s[0], s[1], s[2], nil
 }
 
-func Grype(org string, repo string) error {
-	dbDir := fmt.Sprintf("db/%s/%s/.", org, repo)
-	cmd := exec.Command("grype", "db", "vuln", "--config", "db/grype-config.yaml", "--output", dbDir+"/grype.json", dbDir+"/syft.json")
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func Grype(syftDocument store.SyftDocument) error {
+// 	fmt.Println("Gryping", syftDocument.Organisation, syftDocument.Repository, syftDocument.Commit)
+// 	rawSyft, err := json.Marshal(syftDocument)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	buf := new(bytes.Buffer)
+// 	cmd := exec.Command("grype", "--output", "cyclonedx-json")
+// 	cmd.Stderr = os.Stderr
+// 	cmd.Stdout = buf
+// 	cmd.Stdin = bytes.NewReader(rawSyft)
+// 	err = cmd.Run()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	fmt.Println(buf.String())
+// 	return nil
+// }
+
+// func ParseGrype(data io.Reader) (store.GrypeDocument, error) {
+// 	var document store.GrypeDocument
+// 	d, err := io.ReadAll(data)
+// 	if err != nil {
+// 		return store.GrypeDocument{}, err
+// 	}
+// 	err = json.Unmarshal(d, &document)
+// 	if err != nil {
+// 		return store.GrypeDocument{}, err
+// 	}
+// 	return document, nil
+// }
